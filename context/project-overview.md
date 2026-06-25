@@ -240,6 +240,13 @@ model ItemTag {
 - Main grid/list workspace
 - Full‑screen item editor
 
+### Screenshots
+
+Refer to the screenshoyts below as a basefor the Dashboard UI.It does not have to exact. Use it as a reference.
+
+- @context/screenshots/dashboard-ui-main.png
+- @context/screenshots/dashboard-ui-drawer.png
+
 ### Responsive
 
 - Mobile drawer for sidebar
