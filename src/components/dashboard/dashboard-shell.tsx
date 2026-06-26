@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { PanelLeft, Search, Plus, FolderPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { SidebarContent } from "./sidebar-content";
 
-export function DashboardShell() {
+export function DashboardShell({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
 
@@ -81,8 +81,8 @@ export function DashboardShell() {
         </Sheet>
 
         {/* Main area */}
-        <main className="flex-1 overflow-auto p-6">
-          <h2 className="text-sm font-semibold text-muted-foreground">Main</h2>
+        <main className="flex-1 overflow-auto">
+          {children}
         </main>
       </div>
     </div>
