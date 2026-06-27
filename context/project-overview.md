@@ -108,17 +108,60 @@ Full‑text search across:
 ```prisma
 model User {
   id                   String   @id @default(cuid())
+  name                 String?
   email                String   @unique
+  emailVerified        DateTime?
+  image                String?
   password             String?
   isPro                Boolean  @default(false)
   stripeCustomerId     String?
   stripeSubscriptionId String?
+  accounts             Account[]
+  sessions             Session[]
   items                Item[]
   itemTypes            ItemType[]
   collections          Collection[]
   tags                 Tag[]
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+}
+
+// NextAuth v5 required models (Prisma adapter)
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Item {
