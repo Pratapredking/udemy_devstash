@@ -4,6 +4,9 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export default defineConfig({
+  migrations: {
+    seed: "npx tsx prisma/seed.ts",
+  },
   datasource: {
     url: env("DATABASE_URL"),
   },
