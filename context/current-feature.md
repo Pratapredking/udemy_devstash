@@ -2,35 +2,50 @@
 
 <!-- Feature Name -->
 
-# Neon PostgreSQL + Prisma Setup
+# Seed Data
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+<!-- Not Started|Completed|Completed -->
 
-In Progress
+Not Started
 
 ## Goals
 
 <!-- Goals & requirements -->
 
-- Install and configure Prisma 7 (note: breaking changes from v6 — follow upgrade guide)
-- Set up Neon PostgreSQL as the database provider (serverless)
-- Create initial Prisma schema based on data models in `@context/project-overview.md`
-  - User, Item, ItemType, Collection, Tag, ItemTag
-  - NextAuth models: Account, Session, VerificationToken
-- Add appropriate indexes and cascade deletes
-- Create initial migration (always use `prisma migrate dev`, never `db push`)
-- Configure `DATABASE_URL` in `.env` pointing to the Neon dev branch
+- Create `prisma/seed.ts` (replaces any existing seed scripts in `scripts/`)
+- Create a demo user: email `demo@devstash.io`, name `Demo User`, password `12345678` hashed with bcryptjs (12 rounds), `isPro: false`, `emailVerified: now`
+- Upsert all 7 system ItemTypes with correct colors (see Notes)
+- Create 5 collections with items:
+  - **React Patterns** — 3 TypeScript snippets (useDebounce, useLocalStorage, Context provider pattern)
+  - **AI Workflows** — 3 prompts (code review, documentation generation, refactoring assistance)
+  - **DevOps** — 1 snippet (Docker/CI), 1 command (deployment), 2 links (real URLs)
+  - **Terminal Commands** — 4 commands (git, docker, process management, package manager)
+  - **Design Resources** — 4 links (real URLs: Tailwind, component libraries, design systems, icon libraries)
+- Wire up `prisma.seed` in `package.json` so `npx prisma db seed` works
+- Script must be idempotent (safe to re-run)
 
 ## Notes
 
 <!-- Any extra notes -->
 
-- Use Prisma 7 — has breaking changes. Reference: https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7
-- Neon quickstart: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres
-- `DATABASE_URL` = Neon dev branch; production branch will be separate
-- Always create migrations (`prisma migrate dev`), never use `db push` unless explicitly told
+- Use `bcryptjs` for password hashing (not `bcrypt` — no native bindings needed)
+- System ItemType colors:
+
+| Name    | Icon       | Color   |
+| ------- | ---------- | ------- |
+| Snippet | Code       | #3b82f6 |
+| Prompt  | Sparkles   | #8b5cf6 |
+| Command | Terminal   | #f97316 |
+| Note    | StickyNote | #fde047 |
+| File    | File       | #6b7280 |
+| Image   | Image      | #ec4899 |
+| URL     | Link       | #10b981 |
+
+- Icons are Lucide React component names
+- Seed file goes in `prisma/seed.ts`, not `scripts/`
+- Use `upsert` on stable unique fields (email for user, id for item types) to keep it idempotent
 
 ## History
 
@@ -47,3 +62,9 @@ In Progress
 - Dashboard UI Phase 3
   - Goals: Collections grid with colored left borders and ... menu, Pinned items section, Recent items section, SSR main content with client shell pattern
   - Notes: Phase 3 of 3. Mock data from @src/lib/mock-data.ts. Reference: @context/screenshots/dashboard-ui-main.png
+- Neon PostgreSQL + Prisma 7 Setup
+  - Goals: Install Prisma 7, Neon PostgreSQL, full schema with all models + NextAuth models, indexes, cascade deletes, initial migration, Prisma client singleton with Neon adapter
+  - Notes: Prisma 7 breaking changes — url removed from schema.prisma (moved to prisma.config.ts), generator uses prisma-client with explicit output, @prisma/client still required separately, runtime needs PrismaNeon adapter + ws for Node.js
+- Seed Data
+  - Goals: Demo user (demo@devstash.io, bcrypt password), 7 system ItemTypes with colors, 5 collections with 18 items (React Patterns, AI Workflows, DevOps, Terminal Commands, Design Resources)
+  - Notes: Prisma 7 seed configured in prisma.config.ts under migrations.seed (not package.json). Run with `npx prisma db seed`. Script is idempotent via upsert.
